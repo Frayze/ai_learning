@@ -13,74 +13,39 @@ class AppColor(Enum):
 
 pygame.init()
 
-
 display_width = 800
 display_height = 600
 
 gameDisplay = pygame.display.set_mode((display_width, display_height))
-pygame.display.set_caption("KI Learning Simulation")
+pygame.display.set_caption("Virus Eater")
 
 clock = pygame.time.Clock()
 rand = random.Random()
-#Create Moving Image
-#bacterium_img1 = pygame.image.load('orange_bacterium_small.png').convert()	
-#def bacterium (x, y):
-#        gameDisplay.blit(bacterium_img1, (x,y))
+
 
 def draw_Player(player):
     if player.alive:
-        gameDisplay.blit(player.representation.get_Fill(), player.representation.get_Rect())
+        gameDisplay.blit(player.representation.get_Fill(), player.representation.get_Edges())
 
-
-def move_Player(player):
-    #check x
-    if player.pos_x + player.x_speed < 0:
-        player.pos_x = 0
-        player.x_speed = 0
-    elif player.pos_x + player.x_speed + player.width > display_width:
-        player.pos_x = display_width - player.width
-        player.x_speed = 0
-    else:
-        player.pos_x += player.x_speed
-    #check y
-    if player.pos_y + player.y_speed < 0:
-        player.pos_y = 0
-        player.y_speed = 0
-    elif player.pos_y + player.y_speed + player.height > display_height:
-        player.pos_y = display_height - player.height
-        player.y_speed = 0
-    else:
-        player.pos_y += player.y_speed
     
 def get_player_killed(player, main_player):
-    if(player.get_Rect().colliderect(main_player.get_Rect())):
+    if(player.get_central_Rect().colliderect(main_player.get_central_Rect())):
         player.alive = False
         print("Died with score: " + str(player.score))
     else:
         player.score += 1
     
-def random_move(player, main_player):
-    if player.x_speed > 0:
-        player.x_speed = rand.randint(0,5)
-    elif player.x_speed < 0:
-        player.x_speed = rand.randint(-5, 0)
-    else:
-        player.x_speed = rand.randint(-5,5)
-    
-    if player.y_speed > 0:
-        player.y_speed = rand.randint(0,5)
-    elif player.y_speed < 0:
-        player.y_speed = rand.randint(-5, 0)
-    else:
-        player.y_speed = rand.randint(-5,5)
-    
-    move_Player(player)
 
 
-    
+
+
+
+
+
+
 def game_loop():
-    gameDisplay.fill(AppColor.BLACK.value)
 
+    players = []
     p1 = Player()
     p1.create_Graphic(0, 0, 100, 100, AppColor.RED.value)
     p1.representation.set_Image('orange_bacterium_small.png')
@@ -88,28 +53,49 @@ def game_loop():
     game_error = False
 
     while not game_error:
+        gameDisplay.fill(AppColor.BLACK.value)
+        if len(players) < 10:
+            ai_player = Player()
+            rand_x = rand.randint(0, display_width)
+            rand_y = rand.randint(0, display_width)
+
+            ai_player.create_Graphic(rand_x, rand_y, 50, 50, AppColor.GREEN.value)
+            ai_player.representation.set_Image('orange_bacterium_small.png')
+            ai_player.create_Brain()
+
+            players.append(ai_player)
+
+        for p in players:
+            if p.alive:
+                p.representation.random_move(rand, display_width, display_height)
+                get_player_killed(p, p1)
+                draw_Player(p)
+            else:
+                players.remove(p)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            #print(event)  Debugging
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    pass
+                    p1.representation.x_speed = -10
                 elif event.key == pygame.K_RIGHT:
-                    pass
+                    p1.representation.x_speed = 10
                 elif event.key == pygame.K_DOWN:
-                    pass
+                    p1.representation.y_speed = 10
                 elif event.key == pygame.K_UP:
-                    pass
+                    p1.representation.y_speed = -10
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                    pass
+                    p1.representation.x_speed = 0
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_UP:
-                    pass
-        pygame.display.update() #Kann eventuell nur ein Objekt (Parameter) updaten. Kann auch mit display.flip() erreicht werden
+                    p1.representation.y_speed = 0
+        p1.representation.move_Player(display_width, display_height)
+        pygame.draw.rect(gameDisplay, AppColor.RED.value, p1.representation.get_Rect())
+        pygame.display.update()
         clock.tick(50)
 game_loop()
 pygame.quit()
