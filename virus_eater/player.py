@@ -8,8 +8,8 @@ class Player:
         self.score = 0
 
 
-    def create_Graphic(self, color, pos_x, pos_y, width, height):
-        self.representation = PlayerGraphic(self, color, pos_x, pos_y, width, height)
+    def create_Graphic(self, pos, width, height, color):
+        self.representation = PlayerGraphic(self, pos, width, height, color)
 
 
     def create_Brain(self):
@@ -18,6 +18,6 @@ class Player:
 
     def get_central_Rect(self):
         tmp = self.representation
-        return pygame.Rect(tmp.pos_x + 5, tmp.pos_y + 5, tmp.width - 10, tmp.height - 10)
+        return pygame.Rect(tmp.pos[0] + 5, tmp.pos[1] + 5, tmp.width - 10, tmp.height - 10)
 
 
