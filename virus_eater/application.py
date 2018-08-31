@@ -1,4 +1,4 @@
-import pygame
+import pygame, os
 from player import Player
 from enum import Enum
 
@@ -11,10 +11,13 @@ class AppColor(Enum):
 	GREEN = (0, 255, 0)
 	BLUE = (0, 0, 255) 
 
+
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
 
-display_width = 800
-display_height = 600
+display_width = 1200
+display_height = 700
 
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption("Virus Eater")
@@ -45,11 +48,11 @@ def game_loop():
 
     while not game_error:
         gameDisplay.fill(AppColor.BLACK.value)
-        if len(players) < 1:
+        if len(players) < 10:
             ai_player = Player()
-            rand_x = rand.randint(0, display_width)
+
             rand_y = rand.randint(0, display_height)
-            ai_player.create_Graphic([rand_x, rand_y], 50, 50, AppColor.GREEN.value)
+            ai_player.create_Graphic([100, rand_y], 50, 50, AppColor.GREEN.value)
             ai_player.representation.set_Image('orange_bacterium_small.png')
             ai_player.create_Brain()
             players.append(ai_player)
