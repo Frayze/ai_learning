@@ -5,7 +5,8 @@ from player_brain import *
 class Player:
     def __init__(self):
         self.alive = True
-        self.score = 0
+        self.finished = False
+        self.score = 100
 
 
     def create_Graphic(self, pos, width, height, color):
