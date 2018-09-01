@@ -4,7 +4,7 @@ import pygame
 
 class PlayerGraphic:
 
-    def __init__(self, player, pos, width, height, color = (0,22,0)):
+    def __init__(self, player, pos, width, height, color = (0,0,0)):
         self.player = player
         self.color = color
         self.pos = pos
